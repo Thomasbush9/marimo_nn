@@ -24,6 +24,29 @@ async def _():
 
 
 @app.cell
+def _():
+    from drawdata import ScatterWidget
+    return (ScatterWidget,)
+
+
+@app.cell
+def _(ScatterWidget, mo):
+    iwidget = mo.ui.anywidget(ScatterWidget())
+    iwidget
+    return (iwidget,)
+
+
+@app.cell
+def _(iwidget):
+    iwidget.value
+
+    # You can also access the widget's specific properties
+    iwidget.data
+    iwidget.data_as_polars
+    return
+
+
+@app.cell
 def _(mo):
     mo.md(text="# Neural Networks with Marimo \n This is going to be a guide to show some key concepts of neural networks for the non-experts and some cool concepts of marimo for the people already in the field")
     return
@@ -141,7 +164,7 @@ def _(ImageRefreshWidget, e, np, plot_perceptron_decision_boundary):
             if y[i] * (np.dot(w, X[i]) + b) <= 0:
                 w += lr * y[i] * X[i]
                 b += lr * y[i]
-        widget.src =plot_perceptron_decision_boundary(X, y, w, b,  title=f"Epoch {epoch + 1}")
+                widget.src =plot_perceptron_decision_boundary(X, y, w, b,  title=f"Epoch {epoch + 1}")
 
         # plt.pause(0.1)
 
@@ -198,7 +221,7 @@ def _(np, plt, refresh_matplotlib):
     def cumsum_linechart(data):
         y = np.cumsum(data)
         plt.plot(np.arange(len(y)), y)
-    return
+    return (cumsum_linechart,)
 
 
 @app.cell
@@ -212,22 +235,22 @@ def _():
     from mofresh import ImageRefreshWidget
     import time
 
-    return (ImageRefreshWidget,)
+    return ImageRefreshWidget, time
 
 
 @app.cell
 def _(mo, random):
     get_state, set_state = mo.state([random.random() - .5])
-    return
+    return get_state, set_state
 
 
 @app.cell
-def _():
-    # for i in range(20):
-    #     set_state(get_state() + [random.random() - .5])
-    #     # this one line over causes the update
-    #     widget.src= cumsum_linechart(get_state())
-    #     time.sleep(0.2)
+def _(cumsum_linechart, get_state, random, set_state, time, widget):
+    for _i in range(20):
+        set_state(get_state() + [random.random() - .5])
+        # this one line over causes the update
+        widget.src= cumsum_linechart(get_state())
+        time.sleep(0.2)
     return
 
 
